@@ -1,7 +1,7 @@
 # HS1549-HS1700-S2-protoclusters
 This code was used for galaxy protocluster analysis for Lacaille, K. et al., 2019, MNRAS: https://arxiv.org/pdf/1809.06882.pdf
 
-You may find detailed a description for each script with the code.
+You may find detailed descriptions for each script with the code.
 
 In general, these scripts:
 - identifies galaxy positions;
