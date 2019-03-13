@@ -119,6 +119,9 @@ z_index_ALESS_1700 = np.where((z_ALESS>2.2) & (z_ALESS<2.4))[0]
 
 
 CAT_SPIRE = open('../../h1700/Herschel_SPIRE/1700_SPIRE_fluxes.gaia','r')
+RMS_250 = np.sqrt(6.7**2+3**3)*1e-3
+RMS_350 = np.sqrt(7**2+2**2)*1e-3
+RMS_500 = np.sqrt(7.1**2+2.6**2)*1e-3
 ID = []
 S_250 = []
 S_350 = []
@@ -127,23 +130,27 @@ S_500 = []
 for line in CAT_SPIRE.readlines()[2:]:
     tmp = line.split()
     ID.append(tmp[0])
-    if float(tmp[1])*1000 <= np.sqrt(6.7**2+3**3):
+    if float(tmp[1]) <= RMS_250:
         S_250.append(-1)
     else:
         S_250.append(float(tmp[1]))
 
-    if float(tmp[2])*1000 <= np.sqrt(7**2+2**2):
+    if float(tmp[2]) <= RMS_350:
         S_350.append(-1)
     else:
         S_350.append(float(tmp[2]))
 
-    if float(tmp[3])*1000 <= np.sqrt(7.1**2+2.6**2):
+    if float(tmp[3]) <= RMS_500:
         S_500.append(-1)
     else:
         S_500.append(float(tmp[3]))
 S_250 = np.array(S_250)
+e_S_250 = RMS_250*np.ones(len(ID))
 S_350 = np.array(S_350)
+e_S_350 = RMS_350*np.ones(len(ID))
 S_500 = np.array(S_500)
+e_S_500 = RMS_500*np.ones(len(ID))
+ID = np.array(ID)
 CAT_SPIRE.close()
 
 
@@ -267,6 +274,15 @@ z_15 = [np.where(z_ALESS[z_index_ALESS]<1.5)[0]]
 z_1525 = [np.where((z_ALESS[z_index_ALESS]>1.5) & (z_ALESS[z_index_ALESS]<2.5))[0]]
 z_25 = [np.where(z_ALESS[z_index_ALESS]>2.5)[0]]
 
+colour_index = np.where((S_500>0)&(S_350>0)&(S_250>0))[0]
+S_500_withdata = S_500[colour_index]
+S_350_withdata = S_350[colour_index]
+S_250_withdata = S_250[colour_index]
+e_S_250_withdata = e_S_250[colour_index]
+e_S_350_withdata = e_S_350[colour_index]
+e_S_500_withdata = e_S_500[colour_index]
+ID_withdata = ID[colour_index]
+
 #CC figure
 fig = pl.figure()#figsize=(10,4))
 pl.subplots_adjust(hspace=0,wspace=0)
@@ -277,8 +293,11 @@ ax.set_xscale('linear')
 ax.set_yscale('linear')
 
 
-ax.scatter(S_350/S_250, S_500/S_350, s=250, marker='*',edgecolors='k',facecolors='k',zorder=10)
 
+ax.scatter(S_350_withdata/S_250_withdata,S_500_withdata/S_350_withdata, s=250, marker='*',edgecolors='k',facecolors='k',zorder=10)
+ax.errorbar(S_350_withdata/S_250_withdata,S_500_withdata/S_350_withdata,xerr=0.5*S_350_withdata/S_250_withdata*np.sqrt((e_S_350_withdata/S_350_withdata)**2 + (e_S_250_withdata/S_250_withdata)**2),yerr=0.5*S_500_withdata/S_350_withdata*np.sqrt((e_S_350_withdata/S_350_withdata)**2 + (e_S_500_withdata/S_500_withdata)**2),ls='none')
+for i in range(len(ID_withdata)):
+    pl.text((S_350_withdata/S_250_withdata)[i]-0.05,(S_500_withdata/S_350_withdata)[i]-0.07,ID_withdata[i])
 
 # CC_1700_uplims_index = np.where((ch2_1700[index_1700_notcluster]>0) & (ch4_1700[index_1700_notcluster]>0))[0]
 # CC_1700_uplims_x = 10**(-0.4*(ch2_1700[index_1700_notcluster]-ch1_1700[index_1700_notcluster]))[CC_1700_uplims_index]
@@ -290,7 +309,7 @@ ax.scatter(S_350/S_250, S_500/S_350, s=250, marker='*',edgecolors='k',facecolors
 # pl.errorbar(len(CC_1700_uplims_y)*[0.6],CC_1700_uplims_y, xerr=[len(CC_1700_uplims_y)*[0],len(CC_1700_uplims_y)*[0.08]], xlolims=True, ls='None', c='k')
 
 
-zspace = np.linspace(0.6,4,500)
+zspace = np.linspace(0.5,4,500)
 S_all = [S_1,S_2,S_3]
 wavelength_all = [wavelength_1,wavelength_2,wavelength_3]
 label = ['ALMA composite', 'ALESS composite', 'Eyelash']
@@ -338,6 +357,10 @@ for i in range(1):
 # ax.vlines(x=1.66,linestyle='-',color='k',ymin=0.85,ymax=1.53,zorder=0)
 # #pl.axvline(x=1.82,ls='--',c='k')
 # ax.text(0.68,1.35,r'$2.2<z<2.4$',color='k')
+    if i==2:
+        for j in np.linspace(0.5,4,8):
+            pl.text(x[np.where(zspace<=j)[0][-1]],y[np.where(zspace<=j)[0][-1]],'z='+str(j),color='orange')
+            #pl.axvline(x[np.where(zspace<=j)[0][-1]],ls='--',c='k')
 
 
 ax.set_ylabel(r'$S_{500}/S_{350}$')
@@ -363,6 +386,15 @@ ax.set_ylim(0.3,1.5)
 #pl.rcParams['axes.formatter.min_exponent'] = 100
 
 
-pl.savefig('../../Figures/Colour/1700_SPIRE_colour.pdf', bbox_inches='tight')
+pl.savefig('../../Figures/Colour/1700_SPIRE_colour.png')#, bbox_inches='tight')
 #pl.show()
 pl.close()
+
+
+print 'Photometric redshifts are (ID, redshift):'
+det_lim=0.002
+for i in range(len(ID_withdata)):
+    print ID_withdata[i],round(zspace[np.where(abs(x-S_350_withdata[i]/S_250_withdata[i])<det_lim)[0][-1]],3)#,len(np.where(abs(x-S_350_withdata[i]/S_250_withdata[i])<det_lim)[0])
+
+# print 'IDs with no '
+# for i in ID[np.where((S_500<0)&(S_350<0)&(S_250<0))[0]]:
