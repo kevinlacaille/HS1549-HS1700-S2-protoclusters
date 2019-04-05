@@ -155,7 +155,7 @@ CAT_SPIRE.close()
 
 
 #open file
-cat_IR_1700 = open('../../h1700/mutli_wavelength.gaia','r')
+cat_IR_1700 = open('../../h1700/mutli_wavelength_fixedmaybe.gaia','r')
 #import 850um data
 ID_1700 = []
 ch4_1700 = []
@@ -283,6 +283,7 @@ e_S_350_withdata = e_S_350[colour_index]
 e_S_500_withdata = e_S_500[colour_index]
 ID_withdata = ID[colour_index]
 
+
 #CC figure
 fig = pl.figure()#figsize=(10,4))
 pl.subplots_adjust(hspace=0,wspace=0)
@@ -291,22 +292,6 @@ pl.rc('mathtext', default='regular')
 ax = fig.add_subplot(1,1,1)
 ax.set_xscale('linear')
 ax.set_yscale('linear')
-
-
-
-ax.scatter(S_350_withdata/S_250_withdata,S_500_withdata/S_350_withdata, s=250, marker='*',edgecolors='k',facecolors='k',zorder=10)
-ax.errorbar(S_350_withdata/S_250_withdata,S_500_withdata/S_350_withdata,xerr=0.5*S_350_withdata/S_250_withdata*np.sqrt((e_S_350_withdata/S_350_withdata)**2 + (e_S_250_withdata/S_250_withdata)**2),yerr=0.5*S_500_withdata/S_350_withdata*np.sqrt((e_S_350_withdata/S_350_withdata)**2 + (e_S_500_withdata/S_500_withdata)**2),ls='none')
-for i in range(len(ID_withdata)):
-    pl.text((S_350_withdata/S_250_withdata)[i]-0.05,(S_500_withdata/S_350_withdata)[i]-0.07,ID_withdata[i])
-
-# CC_1700_uplims_index = np.where((ch2_1700[index_1700_notcluster]>0) & (ch4_1700[index_1700_notcluster]>0))[0]
-# CC_1700_uplims_x = 10**(-0.4*(ch2_1700[index_1700_notcluster]-ch1_1700[index_1700_notcluster]))[CC_1700_uplims_index]
-# CC_1700_uplims_y = 10**(-0.4*(ch4_1700[index_1700_notcluster]-ch2_1700[index_1700_notcluster]))[CC_1700_uplims_index]
-# ch1_1700_lowlim_mag = np.min(ch1_1700[np.where(ch1_1700>20.1)[0]]) #np.mean(ch1_1700[np.where(ch1_1700>0)[0]])
-# ch1_1700_lowlim_array = np.array(len(CC_1700_uplims_index)*[ch1_1700_lowlim_mag])
-# ch1_1700_min = 10**(-0.4*(ch2_1700[index_1700_notcluster][CC_1700_uplims_index] - ch1_1700_lowlim_array))
-# ax.scatter(len(CC_1700_uplims_y)*[0.6],CC_1700_uplims_y,s=250, marker='*',edgecolors='k',facecolors='k',zorder=10)
-# pl.errorbar(len(CC_1700_uplims_y)*[0.6],CC_1700_uplims_y, xerr=[len(CC_1700_uplims_y)*[0],len(CC_1700_uplims_y)*[0.08]], xlolims=True, ls='None', c='k')
 
 
 zspace = np.linspace(0.5,4,500)
@@ -349,6 +334,7 @@ for i in range(1):
     ax.plot(x[np.where((zspace>2.5))[0]],y[np.where((zspace>2.5))[0]],c='r',ls='-',zorder=0)
     ax.plot(x[np.where((zspace>2.2) & (zspace<2.4))[0]],y[np.where((zspace>2.2) & (zspace<2.4))[0]],c='m',ls='-',zorder=0)
 
+
 # draw box
 # ax.hlines(y=0.85,linestyle='-',color='k',xmin=1.15,xmax=1.66,zorder=0)
 # ax.hlines(y=1.53,linestyle='-',color='k',xmin=1.15,xmax=1.66,zorder=0)
@@ -361,6 +347,54 @@ for i in range(1):
         for j in np.linspace(0.5,4,8):
             pl.text(x[np.where(zspace<=j)[0][-1]],y[np.where(zspace<=j)[0][-1]],'z='+str(j),color='orange')
             #pl.axvline(x[np.where(zspace<=j)[0][-1]],ls='--',c='k')
+# uncertanties propogated from confusion and intrument noise
+# these are used in the X and Y values for CC plot
+e_350_250 = 0.6*S_350_withdata/S_250_withdata*np.sqrt((e_S_350_withdata/S_350_withdata)**2 + (e_S_250_withdata/S_250_withdata)**2)
+e_500_350 = 0.6*S_500_withdata/S_350_withdata*np.sqrt((e_S_350_withdata/S_350_withdata)**2 + (e_S_500_withdata/S_500_withdata)**2)
+X_up = S_350_withdata / S_250_withdata + e_350_250
+X_down = S_350_withdata / S_250_withdata - e_350_250
+X = S_350_withdata/S_250_withdata
+Y = S_500_withdata/S_350_withdata
+print 'Photometric redshifts and comparison to known data'
+det_lim=0.003
+photo_z_1700 = []
+e_photo_z_1700 = []
+delta_z_1700 = []
+print 'SCUBA-2 ID', '\t','photo-z','\t', 'e_photo-z', '\t', 'IRAC ID','\t', "'known-z'",'\t','delta-z (photo-known)'
+for i in range(len(ID_withdata)):
+    samez = 'N'
+    for j in range(len(ID_1700)):
+        if ID_1700[j].split('_')[1] == ID_withdata[i]:
+            photo_z = round(zspace[np.where(abs(x-S_350_withdata[i]/S_250_withdata[i])<det_lim)[0][-1]],3)
+            e_photo_z = zspace[np.where(abs(x-X_up[i])<det_lim)[0][-1]] - photo_z
+            e_photo_z_1700.append(e_photo_z)
+            photo_z_1700.append(photo_z)
+            if z_1700[j] < 0:
+                delta_z = z_1700[j]
+            else:
+                delta_z = round(z_1700[j],3) - photo_z
+            delta_z_1700.append(delta_z)
+            if round(e_photo_z,1) >= abs(round(delta_z,1)):
+                samez = 'Y'
+            print ID_withdata[i],'\t',round(photo_z,1),'\t', round(e_photo_z,1), '\t', ID_1700[j], '\t',round(z_1700[j],3), '\t',round(delta_z,1), '\t', samez
+photo_z_1700 = np.array(photo_z_1700)
+delta_z_1700 = np.array(delta_z_1700)
+e_photo_z_1700 = np.array(e_photo_z_1700)
+
+ax.scatter(X,Y, s=250, marker='*',edgecolors='k',facecolors='k',zorder=10)
+ax.errorbar(X,Y,xerr=e_350_250,yerr=e_500_350,ls='none',c='k',alpha=0.5)
+for i in range(len(ID_withdata)):
+    pl.text(X[i]-0.05,Y[i]-0.09,ID_withdata[i])
+
+# CC_1700_uplims_index = np.where((ch2_1700[index_1700_notcluster]>0) & (ch4_1700[index_1700_notcluster]>0))[0]
+# CC_1700_uplims_x = 10**(-0.4*(ch2_1700[index_1700_notcluster]-ch1_1700[index_1700_notcluster]))[CC_1700_uplims_index]
+# CC_1700_uplims_y = 10**(-0.4*(ch4_1700[index_1700_notcluster]-ch2_1700[index_1700_notcluster]))[CC_1700_uplims_index]
+# ch1_1700_lowlim_mag = np.min(ch1_1700[np.where(ch1_1700>20.1)[0]]) #np.mean(ch1_1700[np.where(ch1_1700>0)[0]])
+# ch1_1700_lowlim_array = np.array(len(CC_1700_uplims_index)*[ch1_1700_lowlim_mag])
+# ch1_1700_min = 10**(-0.4*(ch2_1700[index_1700_notcluster][CC_1700_uplims_index] - ch1_1700_lowlim_array))
+# ax.scatter(len(CC_1700_uplims_y)*[0.6],CC_1700_uplims_y,s=250, marker='*',edgecolors='k',facecolors='k',zorder=10)
+# pl.errorbar(len(CC_1700_uplims_y)*[0.6],CC_1700_uplims_y, xerr=[len(CC_1700_uplims_y)*[0],len(CC_1700_uplims_y)*[0.08]], xlolims=True, ls='None', c='k')
+
 
 
 ax.set_ylabel(r'$S_{500}/S_{350}$')
@@ -391,10 +425,6 @@ pl.savefig('../../Figures/Colour/1700_SPIRE_colour.png')#, bbox_inches='tight')
 pl.close()
 
 
-print 'Photometric redshifts are (ID, redshift):'
-det_lim=0.002
-for i in range(len(ID_withdata)):
-    print ID_withdata[i],round(zspace[np.where(abs(x-S_350_withdata[i]/S_250_withdata[i])<det_lim)[0][-1]],3)#,len(np.where(abs(x-S_350_withdata[i]/S_250_withdata[i])<det_lim)[0])
 
 # print 'IDs with no '
 # for i in ID[np.where((S_500<0)&(S_350<0)&(S_250<0))[0]]:
