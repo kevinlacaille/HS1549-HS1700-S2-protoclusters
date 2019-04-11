@@ -332,7 +332,7 @@ for i in range(1):
     ax.plot(x[np.where((zspace<1.5))[0]],y[np.where((zspace<1.5))[0]],c='b',ls='-',zorder=0)
     ax.plot(x[np.where((zspace>1.5) & (zspace<2.5))[0]],y[np.where((zspace>1.5) & (zspace<2.5))[0]],c='g',ls='-',zorder=0)
     ax.plot(x[np.where((zspace>2.5))[0]],y[np.where((zspace>2.5))[0]],c='r',ls='-',zorder=0)
-    ax.plot(x[np.where((zspace>2.2) & (zspace<2.4))[0]],y[np.where((zspace>2.2) & (zspace<2.4))[0]],c='m',ls='-',zorder=0)
+    # ax.plot(x[np.where((zspace>2.2) & (zspace<2.4))[0]],y[np.where((zspace>2.2) & (zspace<2.4))[0]],c='m',ls='-',zorder=0)
 
 
 # draw box
@@ -343,9 +343,9 @@ for i in range(1):
 # ax.vlines(x=1.66,linestyle='-',color='k',ymin=0.85,ymax=1.53,zorder=0)
 # #pl.axvline(x=1.82,ls='--',c='k')
 # ax.text(0.68,1.35,r'$2.2<z<2.4$',color='k')
-    if i==2:
-        for j in np.linspace(0.5,4,8):
-            pl.text(x[np.where(zspace<=j)[0][-1]],y[np.where(zspace<=j)[0][-1]],'z='+str(j),color='orange')
+    # if i==2:
+    #     for j in np.linspace(0.5,4,8):
+    #         pl.text(x[np.where(zspace<=j)[0][-1]],y[np.where(zspace<=j)[0][-1]],'z='+str(j),color='orange')
             #pl.axvline(x[np.where(zspace<=j)[0][-1]],ls='--',c='k')
 # uncertanties propogated from confusion and intrument noise
 # these are used in the X and Y values for CC plot
@@ -381,10 +381,28 @@ photo_z_1700 = np.array(photo_z_1700)
 delta_z_1700 = np.array(delta_z_1700)
 e_photo_z_1700 = np.array(e_photo_z_1700)
 
-ax.scatter(X,Y, s=250, marker='*',edgecolors='k',facecolors='k',zorder=10)
-ax.errorbar(X,Y,xerr=e_350_250,yerr=e_500_350,ls='none',c='k',alpha=0.5)
-for i in range(len(ID_withdata)):
-    pl.text(X[i]-0.05,Y[i]-0.09,ID_withdata[i])
+z_S2_1700 = np.array([2.816,-1,-1,2.318,2.313,2.313,-2.3,-1,-1,2.72,-1,-2.3,1.575,2.306,-1,-1,-1,-1,-1,-1,-1])
+
+for i in range(len(X)):
+    if z_S2_1700[i] < 1.5:
+        c = 'b'
+        ebc = 'b'
+    if z_S2_1700[i] > 1.5 and z_S2_1700[i] < 2.5:
+        c = 'g'
+        ebc = 'g'
+    if z_S2_1700[i] > 2.5:
+        c = 'r'
+        ebc = 'r'
+    if z_S2_1700[i] == -1:
+        c = 'w'
+        ebc = 'k'
+    if z_S2_1700[i] == -2.3:
+        c = 'k'
+        ebc = 'k'
+    ax.scatter(X[i],Y[i], s=250, marker='*',edgecolors='k',facecolors=c,zorder=10)
+    ax.errorbar(X[i],Y[i],xerr=e_350_250[i],yerr=e_500_350[i],ls='none',c=ebc,alpha=0.5)
+# for i in range(len(ID_withdata)):
+#     pl.text(X[i]-0.05,Y[i]-0.09,ID_withdata[i])
 
 # CC_1700_uplims_index = np.where((ch2_1700[index_1700_notcluster]>0) & (ch4_1700[index_1700_notcluster]>0))[0]
 # CC_1700_uplims_x = 10**(-0.4*(ch2_1700[index_1700_notcluster]-ch1_1700[index_1700_notcluster]))[CC_1700_uplims_index]
@@ -395,15 +413,27 @@ for i in range(len(ID_withdata)):
 # ax.scatter(len(CC_1700_uplims_y)*[0.6],CC_1700_uplims_y,s=250, marker='*',edgecolors='k',facecolors='k',zorder=10)
 # pl.errorbar(len(CC_1700_uplims_y)*[0.6],CC_1700_uplims_y, xerr=[len(CC_1700_uplims_y)*[0],len(CC_1700_uplims_y)*[0.08]], xlolims=True, ls='None', c='k')
 
+# PUT COLOUR ON STARS WITH KNOWN REDSHIFTS
+#     OPEN W/O Z
+#     BLACK NOT IN PROTO-Z
+
+# ax.scatter(0,0,s=250,marker='*',edgecolors='k',facecolors='b',label=r'$z<1.5$',alpha=0.5)
+# ax.scatter(0,0,s=250,marker='*',edgecolors='k',facecolors='g',label=r'$1.5<z<2.5$',alpha=0.5)
+# ax.scatter(0,0,s=250,marker='*',edgecolors='k',facecolors='r',label=r'$z>2.5$',alpha=0.5)
+# ax.scatter(0,0,s=250,marker='*',edgecolors='k',facecolors='k',label=r'$z\neq z_{proto}$',alpha=0.5)
+# ax.scatter(0,0,s=250,marker='*',edgecolors='k',facecolors='w',label=r'no $z$',alpha=0.5)
+# ax.legend(fontsize=12,loc=4,ncol=1,frameon=True,numpoints=1,scatterpoints=1)
+# ax.text(1.67,1.4,'HS1700',color='k',size=16)
 
 
 ax.set_ylabel(r'$S_{500}/S_{350}$')
 ax.set_xlabel(r'$S_{350}/S_{250}$')
 
+ax.text(1.65,0.35,'HS1700',color='k',size=18)
+
+
 ax.set_xlim(0.3,2)
 ax.set_ylim(0.3,1.5)
-# ax.legend(fontsize=12,loc=2,ncol=1,frameon=True,numpoints=1,scatterpoints=1)
-
 # texty=0.32
 # ax.text(1.6,texty,'HS1700',color='k',size=16)
 
@@ -420,7 +450,7 @@ ax.set_ylim(0.3,1.5)
 #pl.rcParams['axes.formatter.min_exponent'] = 100
 
 
-pl.savefig('../../Figures/Colour/1700_SPIRE_colour.png')#, bbox_inches='tight')
+pl.savefig('../../Figures/Colour/1700_SPIRE_colour.pdf', bbox_inches='tight')
 #pl.show()
 pl.close()
 
