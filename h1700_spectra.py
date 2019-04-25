@@ -18,7 +18,6 @@ ld		new		z
 16a		17.1	2.306
 '''
 
-
 # Temp. ID names
 IDs = np.array(['4','5_2','7_1','16','17'])
 # Temp. spec. redshifts
@@ -35,37 +34,41 @@ for i in IDs:
 wavelength = np.array(wavelength)
 flux = np.array(flux)
 
-lines_wavelength = [6529.03, 6549.86, 6564.61, 6585.27, 6718.29, 6732.67]
-lines_names = ['[N I]','[N II]', r'H$\alpha$','[N II]','[S II]','[S II]']
+lines_wavelength = [6302.046,6365.536,6529.03, 6549.86, 6564.61, 6585.27, 6718.29, 6732.67]
+lines_names = ['[OI]','[OI]','[NI]','[NII]', r'H$\alpha$','[NII]','[SII]','[SII]']
+name_height = np.array([1.05,1.05,1.05,0.90,0.90,1.05,1.05,0.90])+0.25
+name_offset = np.array([-10,-10,-10,-10,10,-10,-10,-10])
+
 ##############
 # Plot spectra
 ##############
 for i in range(len(IDs)):
-	# if IDs[i] == '2bH-1d' or IDs[i] == '4aH_1d' or IDs[i] == '4aJ2_1d':
-	# 	pass
-	# else:
+
 	ax1 = pl.subplot(111)
 	fig = pl.figure(figsize=(8,5))
 	pl.rc('font',size=18)
 	pl.rc('mathtext', default='regular')
 
-	pl.plot(wavelength[i]/(1+z[i]), flux[i], c='b', label='1700.'+IDs[i][0:3]+'(z='+str(z[i])+')')
+	pl.plot(wavelength[i]/(1+z[i]), flux[i], c='k', label='1700.'+IDs[i][0:3]+'(z='+str(z[i])+')')
 
 	for j in range(len(lines_wavelength)):
-		pl.axvline(x=lines_wavelength[j],c='k',ls='--')
-		# pl.text(lines_wavelength[j]+5,1,lines_names[j])
-
+		pl.axvline(x=lines_wavelength[j],c='r',ls='--')
+		pl.text(lines_wavelength[j]+name_offset[j],name_height[j],lines_names[j],size=10,rotation=90,bbox=dict(facecolor='white', edgecolor='none'))
 
 	pl.ylabel('Relative flux')
 	pl.xlabel(r'Rest wavelength ($\AA$)')
 
-	# if abs(z[i]-2.3)<0.1:
-	# 	pl.xlim(6400,6900)
-	# elif abs(z[i]-1.5)<0.1:
-	#     pl.xlim(4700,5100)
+	if abs(z[i]-2.3)<0.1:
+		pl.xlim(6000,7200)
+		pl.ylim(-0.2,1.4)
+	elif abs(z[i]-1.5)<0.1:
+		pl.xlim(6000,7200)
+		pl.ylim(0.1,1.4)
 
-	pl.ylim(-0.4,1.2)
-	pl.legend(fontsize=14,loc=0,ncol=1,frameon=True,numpoints=1,scatterpoints=1)
+	pl.rcParams['legend.handlelength'] = 0
+	pl.rcParams['legend.numpoints'] = 1
+
+	pl.legend(fontsize=12,loc=0,ncol=1,frameon=True)
 
 	pl.savefig('../Figures/HS1700_spectra/1700_'+IDs[i][0:3]+'.pdf', bbox_inches='tight')
 	pl.close()
