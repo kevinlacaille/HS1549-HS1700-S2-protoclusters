@@ -21,7 +21,7 @@ ld		new		z
 # Temp. ID names
 IDs = np.array(['4','5_2','7_1','16','17'])
 # Temp. spec. redshifts
-z = np.array([2.318,2.861,2.313,1.575,2.306])
+z = np.array([2.318,2.286,2.313,1.575,2.306])
 
 # Import Gemini spectra
 wavelength = []
