@@ -21,7 +21,7 @@ ld		new		z
 # Temp. ID names
 IDs = np.array(['4','5_2','7_1','16','17'])
 # Temp. spec. redshifts
-z = np.array([2.318,2.303,2.313,1.575,2.306])
+z = np.array([2.318,2.861,2.313,1.575,2.306])
 
 # Import Gemini spectra
 wavelength = []
@@ -64,6 +64,10 @@ for i in range(len(IDs)):
 	elif abs(z[i]-1.5)<0.1:
 		pl.xlim(6000,7200)
 		pl.ylim(0.1,1.4)
+
+	elif abs(z[i]-2.8)<0.1:
+		pl.xlim(6000,6500)
+		pl.ylim(-0.5,1.4)
 
 	pl.rcParams['legend.handlelength'] = 0
 	pl.rcParams['legend.numpoints'] = 1
