@@ -287,7 +287,7 @@ ID_withdata = ID[colour_index]
 #CC figure
 fig = pl.figure()#figsize=(10,4))
 pl.subplots_adjust(hspace=0,wspace=0)
-pl.rc('font',size=15)
+pl.rc('font',size=18)
 pl.rc('mathtext', default='regular')
 ax = fig.add_subplot(1,1,1)
 ax.set_xscale('linear')
@@ -451,6 +451,17 @@ ax.set_ylim(0.3,1.5)
 
 
 pl.savefig('../../Figures/Colour/1700_SPIRE_colour.pdf', bbox_inches='tight')
+
+
+# ax.scatter(0,0,s=250,marker='*',edgecolors='k',facecolors='b',label=r'$z<1.5$',alpha=1)
+# ax.scatter(0,0,s=250,marker='*',edgecolors='k',facecolors='g',label=r'$1.5<z<2.5$',alpha=1)
+# ax.scatter(0,0,s=250,marker='*',edgecolors='k',facecolors='r',label=r'$z>2.5$',alpha=1)
+# ax.scatter(0,0,s=250,marker='*',edgecolors='k',facecolors='k',label=r'$z\neq z_{proto}$',alpha=1)
+# ax.scatter(0,0,s=250,marker='*',edgecolors='k',facecolors='w',label=r'no $z$',alpha=1)
+# ax.legend(fontsize=12,loc=4,ncol=1,frameon=True,numpoints=1,scatterpoints=1)
+# ax.text(1.67,1.4,'HS1700',color='k',size=16)
+#pl.savefig('../../Figures/Colour/1700_SPIRE_colour_legend.pdf', bbox_inches='tight')
+
 #pl.show()
 pl.close()
 
