@@ -11,17 +11,17 @@ old -> new ID names w/ GNIRS spec-z:
 
 ld		new		z
 ---		---		-
-2b		4.1		2.318
+2b		4.1		2.3
 4a		7.1		2.313
-5.X		5.2		2.303
+5.X		5.2		2.3
 13.Y	16.1	1.575
-16a		17.1	2.306
+16a		17.1	2.3
 '''
 
 # Temp. ID names
 IDs = np.array(['4','5_2','7_1','16','17'])
 # Temp. spec. redshifts
-z = np.array([2.318,2.286,2.313,1.575,2.306])
+z = np.array([2.3,2.3,2.313,1.575,2.306])
 
 # Import Gemini spectra
 wavelength = []
@@ -45,44 +45,52 @@ name_offset = np.array([-10,-10,-15,-15,-5,-10,-15,-5])
 ##############
 for i in range(len(IDs)):
 
-	ax1 = pl.subplot(111)
-	fig = pl.figure(figsize=(8,5))
-	pl.rc('font',size=18)
-	pl.rc('mathtext', default='regular')
+	if IDs[i] == '7_1' or IDs[i] == '16':
 
-	pl.plot(wavelength[i]/(1+z[i]), flux[i], c='k',ls='steps')
-	pl.plot(-100,-100,c='w',label='1700.'+IDs[i][0:3]+' (z='+str(z[i])+')')
-	# Filled bellow spectra
-	#d = np.zeros(len(y))
-	pl.fill_between(wavelength[i]/(1+z[i]), flux[i], interpolate=True, color='k',alpha=0.2)
-	#pl.fill_between(xs, ys, where=ys<=d, interpolate=True, color='red')
+		ax1 = pl.subplot(111)
+		fig = pl.figure(figsize=(8,5))
+		pl.rc('font',size=18)
+		pl.rc('mathtext', default='regular')
 
-	pl.axhline(y=0, ls=':', c='k')
+		pl.plot(wavelength[i]/(1+z[i]), flux[i], c='k',ls='steps')
+		pl.plot(-100,-100,c='w',label='1700.'+IDs[i][0:3])#+' (z='+str(z[i])+')')
+		# Filled bellow spectra
+		#d = np.zeros(len(y))
+		pl.fill_between(wavelength[i]/(1+z[i]), flux[i], interpolate=True, color='k',alpha=0.2)
+		#pl.fill_between(xs, ys, where=ys<=d, interpolate=True, color='red')
 
-	for j in range(len(lines_wavelength)):
-		pl.axvline(x=lines_wavelength[j],c='r',ls='--')
-		pl.text(lines_wavelength[j]+name_offset[j],name_height[j],lines_names[j],fontsize=10,rotation=90,bbox=dict(facecolor='white', edgecolor='none',boxstyle='round',pad=0))
+		pl.axhline(y=0, ls=':', c='k')
 
+		for j in range(len(lines_wavelength)):
+			if IDs[i] == '7_1':
+				if lines_wavelength[j] == 6365.536 or lines_wavelength[j] == 6732.67:
+					pass
+				else:
+					pl.axvline(x=lines_wavelength[j],c='r',ls='--')
+					pl.text(lines_wavelength[j]+name_offset[j],name_height[j],lines_names[j],fontsize=10,rotation=90,bbox=dict(facecolor='white', edgecolor='none',boxstyle='round',pad=0))
 
+			if IDs[i] == '16':
+				pl.axvline(x=lines_wavelength[j],c='r',ls='--')
+				pl.text(lines_wavelength[j]+name_offset[j],name_height[j],lines_names[j],fontsize=10,rotation=90,bbox=dict(facecolor='white', edgecolor='none',boxstyle='round',pad=0))
 
-	if abs(z[i]-2.3)<0.1:
-		pl.xlim(6000,7200)
+		if abs(z[i]-2.3)<0.1:
+			pl.xlim(6000,7200)
 
-	elif abs(z[i]-1.5)<0.1:
-		pl.xlim(6000,7200)
+		elif abs(z[i]-1.5)<0.1:
+			pl.xlim(6000,7200)
 
-	elif abs(z[i]-2.8)<0.1:
-		pl.xlim(6000,6500)
+		elif abs(z[i]-2.8)<0.1:
+			pl.xlim(6000,6500)
 
-	pl.ylim(-0.2,1.4)
+		pl.ylim(-0.2,1.4)
 
-	pl.ylabel('Relative flux')
-	pl.xlabel(r'Rest wavelength ($\AA$)')
+		pl.ylabel('Relative flux')
+		pl.xlabel(r'Rest wavelength ($\AA$)')
 
-	pl.rcParams['legend.handlelength'] = 0
-	pl.rcParams['legend.numpoints'] = 1
+		pl.rcParams['legend.handlelength'] = 0
+		pl.rcParams['legend.numpoints'] = 1
 
-	pl.legend(fontsize=12,loc=0,ncol=1,scatterpoints=0,frameon=True)
+		pl.legend(fontsize=18,loc=0,ncol=1,scatterpoints=0,frameon=False)
 
-	pl.savefig('../Figures/HS1700_spectra/1700_'+IDs[i][0:3]+'.pdf', bbox_inches='tight')
-	pl.close()
+		pl.savefig('../Figures/HS1700_spectra/1700_'+IDs[i][0:3]+'.pdf', bbox_inches='tight')
+		pl.close()
