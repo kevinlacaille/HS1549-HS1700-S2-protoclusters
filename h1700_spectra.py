@@ -11,17 +11,18 @@ old -> new ID names w/ GNIRS spec-z:
 
 ld		new		z
 ---		---		-
-2b		4.1		2.3
+2b		4.1		2.318 -> 2.32
 4a		7.1		2.313
-5.X		5.2		2.3
+5.X		5.2		2.3 -> 2.30
 13.Y	16.1	1.575
-16a		17.1	2.3
+16a		17.1	2.3 ->2.31
 '''
+
 
 # Temp. ID names
 IDs = np.array(['4','5_2','7_1','16','17'])
 # Temp. spec. redshifts
-z = np.array([2.3,2.3,2.313,1.575,2.306])
+z = np.array([2.32,2.30,2.313,1.575,2.31])
 
 # Import Gemini spectra
 wavelength = []
