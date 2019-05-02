@@ -9,20 +9,20 @@ def movingaverage(interval, window_size):
 '''
 old -> new ID names w/ GNIRS spec-z:
 
-ld		new		z
+old		new		z
 ---		---		-
-2b		4.1		2.318 -> 2.32
+2b		4.1		2.318
 4a		7.1		2.313
-5.X		5.2		2.3 -> 2.30
+16a		17.1	2.306
+5.X		5.2		2.303
 13.Y	16.1	1.575
-16a		17.1	2.3 ->2.31
 '''
 
 
 # Temp. ID names
 IDs = np.array(['4','5_2','7_1','16','17'])
 # Temp. spec. redshifts
-z = np.array([2.32,2.30,2.313,1.575,2.31])
+z = np.array([2.318,2.330,2.313,1.575,2.306])
 
 # Import Gemini spectra
 wavelength = []
